@@ -73,6 +73,11 @@ func schemaAppServiceFunctionAppSiteConfig() *pluginsdk.Schema {
 					ValidateFunc: validation.IntBetween(0, 20),
 				},
 
+				"functions_runtime_scale_monitoring_enabled": {
+					Type:     pluginsdk.TypeBool,
+					Optional: true,
+				},
+
 				"scm_ip_restriction": schemaAppServiceIpRestriction(),
 
 				"scm_type": {
@@ -183,6 +188,11 @@ func schemaFunctionAppDataSourceSiteConfig() *pluginsdk.Schema {
 
 				"pre_warmed_instance_count": {
 					Type:     pluginsdk.TypeInt,
+					Computed: true,
+				},
+
+				"functions_runtime_scale_monitoring_enabled": {
+					Type:     pluginsdk.TypeBool,
 					Computed: true,
 				},
 
@@ -392,6 +402,10 @@ func expandFunctionAppSiteConfig(d *pluginsdk.ResourceData) (web.SiteConfig, err
 		siteConfig.PreWarmedInstanceCount = utils.Int32(int32(v.(int)))
 	}
 
+	if v, ok := config["functions_runtime_scale_monitoring_enabled"]; ok {
+		siteConfig.FunctionsRuntimeScaleMonitoringEnabled = utils.Bool(v.(bool))
+	}
+
 	if v, ok := config["scm_type"]; ok {
 		siteConfig.ScmType = web.ScmType(v.(string))
 	}
@@ -469,6 +483,10 @@ func flattenFunctionAppSiteConfig(input *web.SiteConfig) []interface{} {
 
 	if input.JavaVersion != nil {
 		result["java_version"] = *input.JavaVersion
+	}
+
+	if input.FunctionsRuntimeScaleMonitoringEnabled != nil {
+		result["functions_runtime_scale_monitoring_enabled"] = *input.FunctionsRuntimeScaleMonitoringEnabled
 	}
 
 	results = append(results, result)
