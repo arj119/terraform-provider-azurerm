@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Azure/azure-sdk-for-go/services/web/mgmt/2020-06-01/web"
+	"github.com/Azure/azure-sdk-for-go/services/web/mgmt/2020-12-01/web"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/azure"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/tf"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/internal/clients"
@@ -639,6 +639,9 @@ func resourceFunctionAppRead(d *pluginsdk.ResourceData, meta interface{}) error 
 			clientCertMode = string(props.ClientCertMode)
 		}
 		d.Set("client_cert_mode", clientCertMode)
+
+		fmt.Printf("Props from response \n\n%+v\n", props)
+
 	}
 
 	appSettings := flattenAppServiceAppSettings(appSettingsResp.Properties)
@@ -705,6 +708,8 @@ func resourceFunctionAppRead(d *pluginsdk.ResourceData, meta interface{}) error 
 	if err != nil {
 		return fmt.Errorf("Error making Read request on AzureRM Function App Configuration %q: %+v", id.SiteName, err)
 	}
+
+	fmt.Printf("Site config from response \n\n%+v\n", configResp)
 
 	siteConfig := flattenFunctionAppSiteConfig(configResp.SiteConfig)
 	if err = d.Set("site_config", siteConfig); err != nil {
